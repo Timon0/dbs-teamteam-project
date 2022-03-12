@@ -153,3 +153,4 @@ cython_debug/
 
 # data files
 data/weather/weather_stations_data.csv
+data/weather/weather_stations_measurement_data.csv
