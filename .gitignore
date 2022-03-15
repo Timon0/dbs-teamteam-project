@@ -155,3 +155,4 @@ cython_debug/
 data/weather/weather_stations_data.csv
 data/weather/weather_stations_measurement_data.csv
 data/sbb/sbb_kundenpunktlichkeit_data.csv
+data/sbb/sbb_region_data.csv
