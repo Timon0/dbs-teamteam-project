@@ -19,6 +19,7 @@ CREATE TABLE `canton` (
 
 CREATE TABLE `delay` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `date` date DEFAULT NULL,
   `zugpuenktlichkeit` decimal(10,0) NOT NULL,
   `zugpuenktlichkeit_fv` decimal(10,0) NOT NULL,
   `zugpuenktlichkeit_rv` decimal(10,0) NOT NULL,
