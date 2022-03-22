@@ -1,27 +1,27 @@
-﻿isocode;name;sbbregion_isocode
-AG;Aargau;RME
-AR;Appenzell Ausserrhoden;ROT
-AI;Appenzell Innerrhoden;ROT
-BL;Basel-Landschaft;RME
-BS;Basel-Stadt;RME
-BE;Bern;RME
-FR;Freiburg;RWT
-GE;Genf;RWT
-GL;Glarus;ROT
-GR;Graubünden;ROT
-JU;Jura;RME
-LU;Luzern;RME
-NE;Neuenburg;RWT
-NW;Nidwalden;RME
-OW;Obwalden;RME
-SH;Schaffhausen;ROT
-SZ;Schwyz;ROT
-SO;Solothurn;RME
-SG;St. Gallen;ROT
-TI;Tessin;RSD
-TG;Thurgau;ROT
-UR;Uri;ROT
-VD;Waadt;RME
-VS;Wallis;RME
-ZG;Zug;ROT
-ZH;Zürich;ROT
+﻿isocode,name,sbbregion_isocode
+AG,Aargau,RME
+AR,Appenzell Ausserrhoden,ROT
+AI,Appenzell Innerrhoden,ROT
+BL,Basel-Landschaft,RME
+BS,Basel-Stadt,RME
+BE,Bern,RME
+FR,Freiburg,RWT
+GE,Genf,RWT
+GL,Glarus,ROT
+GR,Graubünden,ROT
+JU,Jura,RME
+LU,Luzern,RME
+NE,Neuenburg,RWT
+NW,Nidwalden,RME
+OW,Obwalden,RME
+SH,Schaffhausen,ROT
+SZ,Schwyz,ROT
+SO,Solothurn,RME
+SG,St. Gallen,ROT
+TI,Tessin,RSD
+TG,Thurgau,ROT
+UR,Uri,ROT
+VD,Waadt,RME
+VS,Wallis,RME
+ZG,Zug,ROT
+ZH,Zürich,ROT
