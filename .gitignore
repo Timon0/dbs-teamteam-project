@@ -157,3 +157,6 @@ data/weather/weather_stations_measurement_data.csv
 data/sbb/sbb_kundenpunktlichkeit_data.csv
 data/sbb/sbb_region_data.csv
 data/canton/canton.csv
+
+# properties file
+data-analysis/project.properties
