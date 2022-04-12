@@ -37,7 +37,7 @@ select canton.sbbregion_isocode,
         avg(weather.rainfall) as rainfall,
         avg(weather.airtemp_mean) as temp,
         delay.zugpuenktlichkeit,
-        (select max(subselect.rainfall) from weatherdailydelay as subselect where subselect.sbbregion_isocode = canton.sbbregion_isocode and temp < 0) / 5 as range_step
+        (select max(subselect.rainfall) from weatherdailydelay as subselect where subselect.sbbregion_isocode = canton.sbbregion_isocode and temp < 0) / 4 as range_step
 	from weatherdailymeasurement as weather
 	inner join weatherstation as station on weather.weatherstation_isocode = station.isocode
     inner join canton as canton on canton.isocode = station.canton_isocode
