@@ -159,4 +159,4 @@ data/sbb/sbb_region_data.csv
 data/canton/canton.csv
 
 # properties file
-data-analysis/project.properties
+project.properties
