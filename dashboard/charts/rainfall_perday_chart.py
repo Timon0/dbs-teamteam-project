@@ -24,26 +24,33 @@ def get_figure(region='RME', month=1):
     }
 
     datatrace2 = {
-        'name': 'Avg. Rainfall (past 3 days)',
-        'type': 'scatter',
-        'x': result_df['date'],
-        'y': result_df['moving_average']
-    }
-
-    datatrace3 = {
-        'name': 'Traindelay in %',
+        'name': 'Zugverspätungen in %',
         'type': 'scatter',
         'x': result_df['date'],
         'y': result_df['zugpuenktlichkeit']
     }
 
-    datatrace4 = {
-        'name': 'Temperature',
+    datatrace3 = {
+        'name': 'Durch. Niederschlag (letzten 3 Tage)',
         'type': 'scatter',
         'x': result_df['date'],
-        'y': result_df['temp']
+        'y': result_df['moving_average'],
+        'visible': 'legendonly'
     }
 
-    figdict = {'data': [datatrace1, datatrace2, datatrace3, datatrace4]}
+    datatrace4 = {
+        'name': 'Temparatur',
+        'type': 'scatter',
+        'x': result_df['date'],
+        'y': result_df['temp'],
+        'visible': 'legendonly'
+    }
+
+
+    layout = {
+        'xaxis_tickformat': '%e.%m.%y',
+    }
+
+    figdict = {'data': [datatrace1, datatrace2, datatrace3, datatrace4], 'layout': layout}
 
     return go.Figure(**figdict)
