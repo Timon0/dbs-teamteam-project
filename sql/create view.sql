@@ -45,3 +45,14 @@ select canton.sbbregion_isocode,
     where weather.date >= '2021-01-01'
     group by canton.sbbregion_isocode, weather.date
     order by weather.date;
+
+create view weatherdailydelay_snowfallinranges (sbbregion_isocode, avg_delay, `range`, range_step)
+as
+select 	sbbregion_isocode,
+		avg(100 - zugpuenktlichkeit) as avg_delay,
+        concat(range_step * floor(rainfall / range_step), ' mm - ', range_step * floor(rainfall / range_step) + range_step, ' mm') as `range`,
+        range_step
+	from weatherdailydelay_groupedbysnowfall as weather
+	where temp < 0
+    group by sbbregion_isocode, `range`
+    order by sbbregion_isocode, `range`;
