@@ -17,7 +17,7 @@ def get_figure(region='RME', month=1):
     result_df.zugpuenktlichkeit = 100 - result_df.zugpuenktlichkeit
 
     datatrace1 = {
-        'name': 'Rainfall',
+        'name': 'Regenfall',
         'type': 'bar',
         'x': result_df['date'],
         'y': result_df['rainfall']
@@ -26,6 +26,7 @@ def get_figure(region='RME', month=1):
     datatrace2 = {
         'name': 'Zugverspätungen in %',
         'type': 'scatter',
+        'line_color': '#f08576',
         'x': result_df['date'],
         'y': result_df['zugpuenktlichkeit']
     }
