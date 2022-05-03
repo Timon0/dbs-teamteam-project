@@ -79,7 +79,7 @@ select 	sbbregion_isocode,
 		avg(100 - zugpuenktlichkeit) as avg_delay,
         concat(range_step * floor(rainfall / range_step), ' mm - ', range_step * floor(rainfall / range_step) + range_step, ' mm') as `range`,
         range_step
-	from weatherdailydelay_groupedbysnowfall as weather
+	from weatherdailydelay_groupedbyrainfall as weather
 	where temp > 0
     group by sbbregion_isocode, `range`
     order by sbbregion_isocode, `range`;
