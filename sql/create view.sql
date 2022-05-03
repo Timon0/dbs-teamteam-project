@@ -1,85 +1,58 @@
-create view weatherdailydelay (sbbregion_isocode, date, rainfall, temp, zugpuenktlichkeit)
+create view weatherdailydelay (sbbregion_isocode, date, rainfall, snowfall, max_rainfall, max_snowfall, temp, zugpuenktlichkeit)
 as
-select canton.sbbregion_isocode,
+select delay.sbbregion_isocode,
 		weather.date,
-        avg(weather.rainfall) as rainfall,
+        case when (avg(weather.airtemp_mean) > 0 ) then avg(weather.rainfall) else 0 end as rainfall,
+        case when (avg(weather.airtemp_mean) < 0 ) then avg(weather.rainfall) else 0 end as snowfall,
+        case when (avg(weather.airtemp_mean) > 0 ) then max(weather.rainfall) else 0 end as max_rainfall,
+        case when (avg(weather.airtemp_mean) < 0 ) then max(weather.rainfall) else 0 end as max_snowfall,
         avg(weather.airtemp_mean) as temp,
         delay.zugpuenktlichkeit 
 	from weatherdailymeasurement as weather
 	inner join weatherstation as station on weather.weatherstation_isocode = station.isocode
     inner join canton as canton on canton.isocode = station.canton_isocode
     inner join sbbdelay as delay on delay.date = weather.date and delay.sbbregion_isocode = canton.sbbregion_isocode
-    where weather.date >= '2021-01-01'
-    group by canton.sbbregion_isocode, weather.date
-    order by weather.date;
+    where delay.`date` >= '2021-01-01'
+    group by sbbregion_isocode, `date`
+union
+select delay2.sbbregion_isocode,
+		weather2.date,
+        case when (avg(weather2.airtemp_mean) > 0 ) then avg(weather2.rainfall) else 0 end as rainfall,
+        case when (avg(weather2.airtemp_mean) < 0 ) then avg(weather2.rainfall) else 0 end as snowfall,
+        case when (avg(weather2.airtemp_mean) > 0 ) then max(weather2.rainfall) else 0 end as max_rainfall,
+        case when (avg(weather2.airtemp_mean) < 0 ) then max(weather2.rainfall) else 0 end as max_snowfall,
+        avg(weather2.airtemp_mean) as temp,
+        delay2.zugpuenktlichkeit
+	from weatherdailymeasurement as weather2
+    inner join sbbdelay as delay2 on delay2.date = weather2.date and delay2.sbbregion_isocode = 'NETZ'
+    where delay2.`date` >= '2021-01-01'
+    group by `date`
+    order by `date`;
     
-create view weatherdailysnowdelay (sbbregion_isocode, date, rainfall, snowdepth, temp, zugpuenktlichkeit)
+create view weatherdailydelay_withrangesteps (sbbregion_isocode, date, rainfall, snowfall, max_rainfall, max_snowfall, temp, zugpuenktlichkeit, avg_delay, rainfall_range_step, snowfall_range_step)
 as
-select canton.sbbregion_isocode,
-		weather.date,
-        avg(weather.rainfall) as rainfall,
-		avg(weather.snowdepth) as snowdepth,
-        avg(weather.airtemp_mean) as temp,
-        delay.zugpuenktlichkeit 
-	from weatherdailymeasurement as weather
-	inner join weatherstation as station on weather.weatherstation_isocode = station.isocode
-    inner join canton as canton on canton.isocode = station.canton_isocode
-    inner join sbbdelay as delay on delay.date = weather.date and delay.sbbregion_isocode = canton.sbbregion_isocode
-    where weather.date >= '2021-01-01'
-    group by canton.sbbregion_isocode, weather.date
-    order by weather.date;  
-    
-        
-create view weatherdailydelay_groupedbysnowfall (sbbregion_isocode, date, rainfall, temp, zugpuenktlichkeit, range_step)
-as
-select canton.sbbregion_isocode,
-		weather.date,
-        avg(weather.rainfall) as rainfall,
-        avg(weather.airtemp_mean) as temp,
-        delay.zugpuenktlichkeit,
-        (select max(subselect.rainfall) from weatherdailydelay as subselect where subselect.sbbregion_isocode = canton.sbbregion_isocode and temp < 0) / 4 as range_step
-	from weatherdailymeasurement as weather
-	inner join weatherstation as station on weather.weatherstation_isocode = station.isocode
-    inner join canton as canton on canton.isocode = station.canton_isocode
-    inner join sbbdelay as delay on delay.date = weather.date and delay.sbbregion_isocode = canton.sbbregion_isocode
-    where weather.date >= '2021-01-01'
-    group by canton.sbbregion_isocode, weather.date
-    order by weather.date;
-
-create view weatherdailydelay_snowfallinranges (sbbregion_isocode, avg_delay, `range`, range_step)
-as
-select 	sbbregion_isocode,
+select *,
 		avg(100 - zugpuenktlichkeit) as avg_delay,
-        concat(range_step * floor(rainfall / range_step), ' mm - ', range_step * floor(rainfall / range_step) + range_step, ' mm') as `range`,
-        range_step
-	from weatherdailydelay_groupedbysnowfall as weather
-	where temp < 0
+        (select max(subselect.rainfall) from weatherdailydelay as subselect where subselect.sbbregion_isocode = weather.sbbregion_isocode and subselect.temp > 0) / 4 as rainfall_range_step,
+        (select max(subselect.snowfall) from weatherdailydelay as subselect where subselect.sbbregion_isocode = weather.sbbregion_isocode and subselect.temp < 0) / 4 as snowfall_range_step
+        from weatherdailydelay as weather
+        group by weather.sbbregion_isocode, weather.date
+    order by weather.date;
+    
+create view weatherdailydelay_snowfallinranges (sbbregion_isocode, date, rainfall, snowfall, max_rainfall, max_snowfall, temp, zugpuenktlichkeit, avg_delay, rainfall_range_step, snowfall_range_step, `range`)
+as
+select 	*,
+        concat(snowfall_range_step * floor(snowfall / snowfall_range_step), ' mm - ', snowfall_range_step * floor(snowfall / snowfall_range_step) + snowfall_range_step, ' mm') as `range`
+	from weatherdailydelay_withrangesteps
+	where snowfall > 0
     group by sbbregion_isocode, `range`
     order by sbbregion_isocode, `range`;
-
-create view weatherdailydelay_groupedbyrainfall (sbbregion_isocode, date, rainfall, temp, zugpuenktlichkeit, range_step)
+    
+create view weatherdailydelay_rainfallinranges(sbbregion_isocode, date, rainfall, snowfall, max_rainfall, max_snowfall, temp, zugpuenktlichkeit, avg_delay, rainfall_range_step, snowfall_range_step, `range`)
 as
-select canton.sbbregion_isocode,
-		weather.date,
-        avg(weather.rainfall) as rainfall,
-        avg(weather.airtemp_mean) as temp,
-        delay.zugpuenktlichkeit,
-        (select max(subselect.rainfall) from weatherdailydelay as subselect where subselect.sbbregion_isocode = canton.sbbregion_isocode and temp > 0) / 4 as range_step
-	from weatherdailymeasurement as weather
-	inner join weatherstation as station on weather.weatherstation_isocode = station.isocode
-    inner join canton as canton on canton.isocode = station.canton_isocode
-    inner join sbbdelay as delay on delay.date = weather.date and delay.sbbregion_isocode = canton.sbbregion_isocode
-    where weather.date >= '2021-01-01'
-    group by canton.sbbregion_isocode, weather.date
-    order by weather.date;
-
-create view weatherdailydelay_rainfallinranges (sbbregion_isocode, avg_delay, `range`, range_step)
-as
-select 	sbbregion_isocode,
-		avg(100 - zugpuenktlichkeit) as avg_delay,
-        concat(range_step * floor(rainfall / range_step), ' mm - ', range_step * floor(rainfall / range_step) + range_step, ' mm') as `range`,
-        range_step
-	from weatherdailydelay_groupedbyrainfall as weather
-	where temp > 0
+select 	*,
+        concat(rainfall_range_step * floor(rainfall / rainfall_range_step), ' mm - ', rainfall_range_step * floor(rainfall / rainfall_range_step) + rainfall_range_step, ' mm') as `range`
+	from weatherdailydelay_withrangesteps
+	where rainfall > 0
     group by sbbregion_isocode, `range`
     order by sbbregion_isocode, `range`;
