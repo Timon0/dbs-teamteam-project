@@ -1,11 +1,9 @@
-create view weatherdailydelay (sbbregion_isocode, date, rainfall, snowfall, max_rainfall, max_snowfall, temp, zugpuenktlichkeit)
+create view weatherdailydelay (sbbregion_isocode, date, rainfall, snowfall, temp, zugpuenktlichkeit)
 as
 select delay.sbbregion_isocode,
 		weather.date,
         case when (avg(weather.airtemp_mean) > 0 ) then avg(weather.rainfall) else 0 end as rainfall,
         case when (avg(weather.airtemp_mean) < 0 ) then avg(weather.rainfall) else 0 end as snowfall,
-        case when (avg(weather.airtemp_mean) > 0 ) then max(weather.rainfall) else 0 end as max_rainfall,
-        case when (avg(weather.airtemp_mean) < 0 ) then max(weather.rainfall) else 0 end as max_snowfall,
         avg(weather.airtemp_mean) as temp,
         delay.zugpuenktlichkeit 
 	from weatherdailymeasurement as weather
@@ -19,8 +17,6 @@ select delay2.sbbregion_isocode,
 		weather2.date,
         case when (avg(weather2.airtemp_mean) > 0 ) then avg(weather2.rainfall) else 0 end as rainfall,
         case when (avg(weather2.airtemp_mean) < 0 ) then avg(weather2.rainfall) else 0 end as snowfall,
-        case when (avg(weather2.airtemp_mean) > 0 ) then max(weather2.rainfall) else 0 end as max_rainfall,
-        case when (avg(weather2.airtemp_mean) < 0 ) then max(weather2.rainfall) else 0 end as max_snowfall,
         avg(weather2.airtemp_mean) as temp,
         delay2.zugpuenktlichkeit
 	from weatherdailymeasurement as weather2
@@ -29,7 +25,7 @@ select delay2.sbbregion_isocode,
     group by `date`
     order by `date`;
     
-create view weatherdailydelay_withrangesteps (sbbregion_isocode, date, rainfall, snowfall, max_rainfall, max_snowfall, temp, zugpuenktlichkeit, avg_delay, rainfall_range_step, snowfall_range_step)
+create view weatherdailydelay_withrangesteps (sbbregion_isocode, date, rainfall, snowfall, temp, zugpuenktlichkeit, avg_delay, rainfall_range_step, snowfall_range_step)
 as
 select *,
 		avg(100 - zugpuenktlichkeit) as avg_delay,
@@ -39,7 +35,7 @@ select *,
         group by weather.sbbregion_isocode, weather.date
     order by weather.date;
     
-create view weatherdailydelay_snowfallinranges (sbbregion_isocode, date, rainfall, snowfall, max_rainfall, max_snowfall, temp, zugpuenktlichkeit, avg_delay, rainfall_range_step, snowfall_range_step, `range`)
+create view weatherdailydelay_snowfallinranges (sbbregion_isocode, date, rainfall, snowfall, temp, zugpuenktlichkeit, avg_delay, rainfall_range_step, snowfall_range_step, `range`)
 as
 select 	*,
         concat(snowfall_range_step * floor(snowfall / snowfall_range_step), ' mm - ', snowfall_range_step * floor(snowfall / snowfall_range_step) + snowfall_range_step, ' mm') as `range`
@@ -48,7 +44,7 @@ select 	*,
     group by sbbregion_isocode, `range`
     order by sbbregion_isocode, `range`;
     
-create view weatherdailydelay_rainfallinranges(sbbregion_isocode, date, rainfall, snowfall, max_rainfall, max_snowfall, temp, zugpuenktlichkeit, avg_delay, rainfall_range_step, snowfall_range_step, `range`)
+create view weatherdailydelay_rainfallinranges(sbbregion_isocode, date, rainfall, snowfall, temp, zugpuenktlichkeit, avg_delay, rainfall_range_step, snowfall_range_step, `range`)
 as
 select 	*,
         concat(rainfall_range_step * floor(rainfall / rainfall_range_step), ' mm - ', rainfall_range_step * floor(rainfall / rainfall_range_step) + rainfall_range_step, ' mm') as `range`
