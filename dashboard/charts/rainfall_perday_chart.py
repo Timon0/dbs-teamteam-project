@@ -5,9 +5,7 @@ import util.helper as helper
 
 def get_figure(region='RME', month=1):
     query = f'''
-    SELECT *, avg(rainfall) OVER(ORDER BY date
-         ROWS BETWEEN 2 PRECEDING AND current row)
-         AS moving_average FROM weatherdailydelay 
+    SELECT * FROM weatherdailydelay 
          WHERE 
             sbbregion_isocode = '{region}' AND MONTH(date)={month}
     '''
@@ -16,14 +14,14 @@ def get_figure(region='RME', month=1):
     result_df = pd.DataFrame(result)
     result_df.zugpuenktlichkeit = 100 - result_df.zugpuenktlichkeit
 
-    datatrace1 = {
+    rainfall_trace = {
         'name': 'Regenfall',
         'type': 'bar',
         'x': result_df['date'],
         'y': result_df['rainfall']
     }
 
-    datatrace2 = {
+    delay_trace = {
         'name': 'Zugverspätungen in %',
         'type': 'scatter',
         'line_color': '#f08576',
@@ -31,27 +29,20 @@ def get_figure(region='RME', month=1):
         'y': result_df['zugpuenktlichkeit']
     }
 
-    datatrace3 = {
-        'name': 'Durch. Niederschlag (letzten 3 Tage)',
-        'type': 'scatter',
+    snowfall_trace = {
+        'name': 'Schnefall',
+        'type': 'bar',
         'x': result_df['date'],
-        'y': result_df['moving_average'],
-        'visible': 'legendonly'
+        'y': result_df['snowfall'],
+        'marker': {
+            'color': '#2aeef5'
+        }
     }
-
-    datatrace4 = {
-        'name': 'Temparatur',
-        'type': 'scatter',
-        'x': result_df['date'],
-        'y': result_df['temp'],
-        'visible': 'legendonly'
-    }
-
 
     layout = {
         'xaxis_tickformat': '%e.%m.%y',
     }
 
-    figdict = {'data': [datatrace1, datatrace2, datatrace3, datatrace4], 'layout': layout}
+    figdict = {'data': [rainfall_trace, snowfall_trace, delay_trace ], 'layout': layout}
 
     return go.Figure(**figdict)

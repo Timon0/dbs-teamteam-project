@@ -2,6 +2,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import util.helper as helper
 import util.sbbregions as sbbregions
+import util.charts as charts
 
 def get_figure(region='RME'):
     query = f'''
@@ -31,12 +32,10 @@ def get_figure(region='RME'):
         yaxis=dict(
             tickmode='array',
             tickvals=result_df['range'],
-            ticktext=['Wenig bis kein Regenfall', 'Wenig Regenfall', 'Mittlerer Regenfall', 'Mittelstarker Regenfall', 'Starker Regenfall', '']
+            ticktext=charts.get_grouped_labels('Regenfall', region)
         )
     )
-    fig.add_vline(x=sbbregions.get_avg_region_delay(region), annotation_xanchor='center', annotation_y=1.1,
-                  line_dash="dash", line_color="grey",
-                  annotation_text=f'Durchschnittsverspätung: {sbbregions.get_avg_region_delay(region)}%')
+    fig.add_vline(**charts.create_vline_avg_delay(region))
     fig.update_traces(textposition='auto')
     return fig
 
