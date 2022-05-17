@@ -1,8 +1,9 @@
-import plotly.graph_objects as go
 import pandas as pd
-import util.helper as helper
-import util.sbbregions as sbbregions
+import plotly.graph_objects as go
+
 import util.charts as charts
+import util.helper as helper
+
 
 def get_figure(region='RME'):
     query = f'''

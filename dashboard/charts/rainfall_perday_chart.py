@@ -40,9 +40,11 @@ def get_figure(region='RME', month=1):
     }
 
     layout = {
+        'barmode': 'stack',
         'xaxis_tickformat': '%e.%m.%y',
+        'legend_traceorder': 'normal'
     }
 
-    figdict = {'data': [rainfall_trace, snowfall_trace, delay_trace ], 'layout': layout}
+    figdict = {'data': [rainfall_trace, snowfall_trace, delay_trace], 'layout': layout}
 
     return go.Figure(**figdict)
