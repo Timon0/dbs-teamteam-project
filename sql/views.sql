@@ -22,8 +22,7 @@ select delay2.sbbregion_isocode,
 	from weatherdailymeasurement as weather2
     inner join sbbdelay as delay2 on delay2.date = weather2.date and delay2.sbbregion_isocode = 'NETZ'
     where delay2.`date` >= '2021-01-01'
-    group by `date`
-    order by `date`;
+    group by `date`;
     
 create view weatherdailydelay_withrangesteps (sbbregion_isocode, date, rainfall, snowfall, temp, zugpuenktlichkeit, delay, rainfall_range_step, snowfall_range_step)
 as
@@ -31,8 +30,7 @@ select *,
 		(100 - zugpuenktlichkeit) as delay,
         (select max(subselect.rainfall) from weatherdailydelay as subselect where subselect.sbbregion_isocode = weather.sbbregion_isocode and subselect.temp > 0) / 4 as rainfall_range_step,
         (select max(subselect.snowfall) from weatherdailydelay as subselect where subselect.sbbregion_isocode = weather.sbbregion_isocode and subselect.temp < 0) / 4 as snowfall_range_step
-        from weatherdailydelay as weather
-		order by weather.date;
+        from weatherdailydelay as weather;
     
 create view weatherdailydelay_snowfallinranges (sbbregion_isocode, avg_delay, snowfall_range_step, `range`)
 as
