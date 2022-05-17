@@ -6,12 +6,12 @@ import util.helper as helper
 
 
 def get_figure(region='RME'):
-    query = f'''
+    query = '''
         SELECT * FROM weatherdailydelay_rainfallinranges
-             WHERE sbbregion_isocode = '{region}'
+             WHERE sbbregion_isocode = %s
         '''
 
-    result = pd.read_sql(sql=query, con=helper.get_sql_connection())
+    result = pd.read_sql(sql=query, con=helper.get_sql_connection(), params=[region])
     result_df = pd.DataFrame(result)
     result_df['range_start'] = result_df['range'].str.split(" ", 1).str[0]
     result_df.range_start = pd.to_numeric(result_df.range_start, errors='coerce')

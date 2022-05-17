@@ -4,13 +4,13 @@ import util.helper as helper
 
 
 def get_figure(region='RME', month=1):
-    query = f'''
+    query = '''
     SELECT * FROM weatherdailydelay 
          WHERE 
-            sbbregion_isocode = '{region}' AND MONTH(date)={month}
+            sbbregion_isocode =%s AND MONTH(date)=%s
     '''
 
-    result = pd.read_sql(sql=query, con=helper.get_sql_connection())
+    result = pd.read_sql(sql=query, con=helper.get_sql_connection(), params=[region, month])
     result_df = pd.DataFrame(result)
     result_df.zugpuenktlichkeit = 100 - result_df.zugpuenktlichkeit
 
